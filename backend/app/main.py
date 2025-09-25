@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 from app.api import scenario, media, video
 
@@ -19,8 +20,9 @@ app.include_router(media.router)
 app.include_router(video.router)
 
 # Serve storage for local dev
-app.mount("/storage/uploads", StaticFiles(directory="../storage/uploads"), name="uploads")
-app.mount("/storage/generated", StaticFiles(directory="../storage/generated"), name="generated")
+BASE = Path(__file__).resolve().parents[1]
+app.mount("/storage/uploads", StaticFiles(directory=str(BASE / "storage" / "uploads")), name="uploads")
+app.mount("/storage/generated", StaticFiles(directory=str(BASE / "storage" / "generated")), name="generated")
 
 @app.get("/")
 async def root():
